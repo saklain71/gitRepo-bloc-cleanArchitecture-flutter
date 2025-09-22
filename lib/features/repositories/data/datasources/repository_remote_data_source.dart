@@ -21,14 +21,18 @@ class RepositoryRemoteDataSourceImpl implements RepositoryRemoteDataSource {
     if (kDebugMode) {
       print('technology $technology');
     }
-    final response = await dio.get(
-      'https://api.github.com/search/repositories?q=$technology&sort=stars&order=desc',
-    );
-    if (response.statusCode == 200) {
-      final items = response.data['items'] as List;
-      return items.map((item) => RepositoryModel.fromJson(item)).toList();
-    } else {
-      throw ServerException();
+      final response = await dio.get(
+        'https://api.github.com/search/repositories?q=$technology&sort=stars&order=desc&per_page=50',
+      );
+      if (response.statusCode == 200) {
+        if (kDebugMode) {
+          print(response.data);
+        }
+        final items = response.data['items'] as List;
+        return items.map((item) => RepositoryModel.fromJson(item)).toList();
+      } else {
+        throw ServerException();
+      }
     }
-  }
+
 }

@@ -20,12 +20,14 @@ class RepositoryEntity extends Equatable {
 class Owner extends Equatable {
   final String login;
   final String avatarUrl;
+  final String urlId;
 
   const Owner({
     required this.login,
     required this.avatarUrl,
+    required this.urlId,
   });
 
   @override
-  List<Object?> get props => [login, avatarUrl];
+  List<Object?> get props => [login, avatarUrl, urlId];
 }

@@ -1,4 +1,5 @@
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gemini_test/features/repositories/domain/entities/repository_entity.dart';
@@ -6,6 +7,7 @@ import 'package:gemini_test/features/repositories/presentation/bloc/repository_b
 import 'package:gemini_test/features/repositories/presentation/bloc/repository_event.dart';
 import 'package:gemini_test/features/repositories/presentation/bloc/repository_state.dart';
 import 'package:gemini_test/injection_container.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class RepositoryListScreen extends StatefulWidget {
   final String technology;
@@ -37,6 +39,29 @@ class _RepositoryListScreenState extends State<RepositoryListScreen> {
               repo.name.toLowerCase().contains(_searchController.text.toLowerCase()))
           .toList();
     });
+  }
+
+  // Future<void> _launchUrl(String url) async {
+  //   if (await canLaunchUrl(Uri.parse(url))) {
+  //     await launchUrl(Uri.parse(url));
+  //   } else {
+  //     // Handle the error (e.g., show a snackbar)
+  //     throw 'Could not launch $url';
+  //   }
+  // }
+
+  Future<void> _launchUrl(String url) async {
+    final Uri uri = Uri.parse(url);
+    try {
+      if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+        throw 'Could not launch $url';
+      }
+    } catch (e) {
+      // You can add a snackbar or an alert dialog here to inform the user.
+      if (kDebugMode) {
+        print('Failed to launch URL: $e');
+      }
+    }
   }
 
   @override
@@ -72,6 +97,7 @@ class _RepositoryListScreenState extends State<RepositoryListScreen> {
                     child: CircularProgressIndicator(),
                   );
                 } else if (state is RepositoryLoaded) {
+                  print('repo ${state.repositories}');
                   _repositories = state.repositories;
                   _filteredRepositories = _repositories
                       .where((repo) => repo.name
@@ -89,7 +115,7 @@ class _RepositoryListScreenState extends State<RepositoryListScreen> {
                             backgroundImage: NetworkImage(repository.owner.avatarUrl),
                           ),
                           title: Text(repository.name),
-                          subtitle: Text(repository.description ?? ''),
+                          // subtitle: Text(repository.description ?? ''),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -98,6 +124,12 @@ class _RepositoryListScreenState extends State<RepositoryListScreen> {
                               Text(repository.stargazersCount.toString()),
                             ],
                           ),
+                          onTap: () {
+                              if (kDebugMode) {
+                                print(repository.owner.urlId.toString());
+                            }
+                             _launchUrl(repository.owner.urlId); // Call the launch function with the repo's URL// Call the launch function with the repo's URL
+                          },
                         ),
                       );
                     },

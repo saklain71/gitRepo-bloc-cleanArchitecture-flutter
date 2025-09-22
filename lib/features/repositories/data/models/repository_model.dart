@@ -36,12 +36,14 @@ class OwnerModel extends Owner {
   const OwnerModel({
     required String login,
     required String avatarUrl,
-  }) : super(login: login, avatarUrl: avatarUrl);
+    required String urlId,
+  }) : super(login: login, avatarUrl: avatarUrl, urlId: urlId);
 
   factory OwnerModel.fromJson(Map<String, dynamic> json) {
     return OwnerModel(
       login: json['login'] as String,
       avatarUrl: json['avatar_url'] as String,
+      urlId: json['html_url'] as String,
     );
   }
 
@@ -49,6 +51,7 @@ class OwnerModel extends Owner {
     return {
       'login': login,
       'avatar_url': avatarUrl,
+      'html_url': urlId,
     };
   }
 }
